@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1"
+    />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="upgrade-insecure-requests"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Sint-Genesius-Rode Boek</title>
+    <meta name="apple-mobile-web-app-status-bar" content="#aa7700" />
+    <meta name="theme-color" content="black" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" href="images/sgrv2og.png" />
+    <link rel="stylesheet" href="styles.css" />
+
+    <script
+      type="text/javascript"
+      src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"
+    ></script>
+
+    <script
+      type="text/javascript"
+      src="https://oss.sheetjs.com/sheetjs/xlsx.full.min.js"
+    ></script>
+    <script src="script.js"></script>
+  </head>
+  <body onload="readTextFile(1)">
+    <h1 style="color: green" id="title">Sint-Genesius-Rode Boek</h1>
+
+    <div id="container">
+      <p id="text">Geef zoekterm:</p>
+
+      <input type="text" placeholder="Zoek" id="input" />
+
+      <button id="zoekop" type="button" onclick="readTextFileWithParam()">
+        Zoek op
+      </button>
+      <button id="reset" type="button" onclick="readTextFileWithParam()">
+        Reset
+      </button>
+    </div>
+    <div id="butandtable">
+      <p hidden id="niets">Er is niets gevodnen met die zoekopdracht</p>
+      <table id="excel_data"></table>
+
+      <div id="butons">
+        <button id="prevpage" type="button" onclick="prevPage()" hidden>
+          Vorige Pagina
+        </button>
+        <button id="nextpage" type="button" onclick="nextPage()">
+          Volgende Pagina
+        </button>
+      </div>
+    </div>
+
+    <script>
+      window.addEventListener("load", () => {
+        registerSW();
+      });
+      async function registerSW() {
+        if ("serviceWorker" in navigator) {
+          try {
+            await navigator.serviceWorker.register("serviceworker.js");
+          } catch (e) {
+            console.log("SW registration failed");
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
