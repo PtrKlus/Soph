@@ -114,11 +114,21 @@ function arrayEquals(a, b) {
 }
 
 // Set up the SVG
-const svg = d3.select("#mapsvg"),
-  width = +svg.attr("width"),
-  height = +svg.attr("height");
+const svg = d3.select("#mapsvg");
+const svg2 = d3.select("#mapsvg2");
+var height = Math.max(
+  document.documentElement.clientHeight,
+  window.innerHeight
+);
+var width = Math.max(document.documentElement.clientWidth, window.innerWidth);
+// height = height - d3.select("#explain").node().getBoundingClientRect().height;
+height = height - height / 10;
 
-console.log("🚀 ~ svg:", svg);
+svg.attr("width", width);
+svg.attr("height", height);
+svg2.attr("width", width);
+svg2.attr("height", height);
+
 // Load Belgium GeoJSON data
 d3.json(
   "https://raw.githubusercontent.com/bmesuere/belgium-topojson/master/belgium.json"
@@ -127,25 +137,47 @@ d3.json(
     topojsondata,
     topojsondata.objects.municipalities
   );
-  // Create a projection
+
+  const geojson2 = topojson.feature(
+    topojsondata,
+    topojsondata.objects.provinces
+  );
+
   const projection = d3.geoMercator().fitSize([width, height], geojson);
-  console.log("🚀 ~ projection:", projection);
 
-  // Create a path generator
   const path = d3.geoPath().projection(projection);
-  console.log("🚀 ~ path:", path);
 
-  // Render the map
+  var counter = 0;
+
+  svg2
+    .selectAll("path")
+    .data(geojson2.features)
+    .enter()
+    .append("path")
+    .attr("d", path);
   svg
     .selectAll("path")
     .data(geojson.features)
     .enter()
     .append("path")
     .attr("d", path)
-    .on("mouseover", function () {
-      d3.select(this).attr("fill", "#f00"); // Change color on hover
-    })
-    .on("mouseout", function () {
-      d3.select(this).attr("fill", "#ccc"); // Reset color on mouseout
+    .on("click", function (event, d) {
+      if (counter == 3) {
+        d3.select("#mapsvg")
+          .selectAll("path")
+          .style("fill", "rgb(223 229 229)");
+        counter = 0;
+      }
+      var data = d.properties;
+      if (data.prov_nl != "Provincie Vlaams-Brabant") {
+        d3.select(this).style("fill", "red");
+        counter++;
+      } else if (data.name_nl != "Sint-Genesius-Rode") {
+        d3.select(this).style("fill", "orange");
+        counter++;
+      } else {
+        $("#map").hide();
+        $("#shrek").show();
+      }
     });
 });

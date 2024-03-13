@@ -312,6 +312,23 @@ body {
   width: 100%;
 }
 #map {
-  width: 100vw;
-  height: 100vh;
+  padding-top: 5vh;
+  #mapsvg {
+    position: absolute;
+    left: 0;
+    path {
+      stroke: grey;
+      fill: rgb(223 229 229);
+    }
+  }
+  #mapsvg2 {
+    position: absolute;
+    pointer-events: none;
+    left: 0;
+    stroke-width: 2px;
+    path {
+      stroke: black;
+      fill: transparent;
+    }
+  }
 }
