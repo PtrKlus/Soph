@@ -1,5 +1,6 @@
 var currentPage = "blackSquare";
 var triesTip = 5;
+var timercheck;
 document.addEventListener("DOMContentLoaded", function () {
   var hiddenImage = document.getElementById("hiddenImage");
   $("#blackSquare").show();
@@ -178,6 +179,108 @@ d3.json(
       } else {
         $("#map").hide();
         $("#shrek").show();
+        timercheck = setInterval(timerInterval, 1000);
       }
     });
+});
+
+// SHREK
+
+const targetImg = document.getElementById("farquad");
+showImage();
+const damagePopup = document.getElementById("damage-popup");
+const retryBtn = document.getElementById("retry");
+const beatFarBtn = document.getElementById("beatFar");
+$("#retry").hide();
+$("#beatFar").hide();
+
+beatFarBtn.addEventListener("click", function () {
+  $("#shrek").hide();
+  $("#ridlle").show();
+});
+
+function getRandomPosition() {
+  const offset = 150; // Adjust this value as needed
+  const x = Math.random() * (window.innerWidth - offset);
+  const y = Math.random() * (window.innerHeight - offset);
+  return { x, y };
+}
+
+function showImage() {
+  const position = getRandomPosition();
+  targetImg.style.left = position.x + "px";
+  targetImg.style.top = position.y + "px";
+  targetImg.style.display = "block";
+}
+
+function timerInterval() {
+  console.log(timer);
+  if (timer == 0) {
+    $("#farquad").hide();
+    $("#retry").show();
+    clearInterval(timercheck);
+  } else {
+    timer--;
+    d3.select("#timer").node().innerHTML = timer;
+    if (d3.select("#timer").style("color") != "white") {
+      d3.select("#timer").style("color", "white");
+    } else {
+      d3.select("#timer").style("color", "#11b61f");
+    }
+  }
+}
+
+var timer = 60;
+
+var hBar = $(".health-bar"),
+  bar = hBar.find(".bar"),
+  hit = hBar.find(".hit");
+retryBtn.addEventListener("click", function () {
+  $("#retry").hide();
+  $("#farquad").show();
+  hBar.data("value", hBar.data("total"));
+  hit.css({ width: "0" });
+  bar.css("width", "100%");
+  timer = 60;
+  timercheck = setInterval(timerInterval, 1000);
+});
+
+targetImg.addEventListener("click", function (event) {
+  var total = hBar.data("total"),
+    value = hBar.data("value");
+
+  if (value < 0 && timer > 0) {
+    $("#beatFar").show();
+    $("#farquad").hide();
+    clearInterval(timercheck);
+    return;
+  } else {
+    showImage();
+    var damage = Math.floor(Math.random() * 30);
+
+    const x = event.clientX;
+    const y = event.clientY;
+    damagePopup.innerText = damage;
+    damagePopup.style.left = x + "px";
+    damagePopup.style.top = y - 60 + "px"; // Adjust the offset as needed
+    damagePopup.style.display = "block";
+
+    setTimeout(function () {
+      damagePopup.style.display = "none";
+    }, 2000);
+
+    var newValue = value - damage;
+    // calculate the percentage of the total width
+    var barWidth = (newValue / total) * 100;
+    var hitWidth = (damage / value) * 100 + "%";
+
+    // show hit bar and set the width
+    hit.css("width", hitWidth);
+    hBar.data("value", newValue);
+
+    setTimeout(function () {
+      hit.css({ width: "0" });
+      bar.css("width", barWidth + "%");
+    }, 500);
+  }
 });
