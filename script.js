@@ -194,11 +194,6 @@ const beatFarBtn = document.getElementById("beatFar");
 $("#retry").hide();
 $("#beatFar").hide();
 
-beatFarBtn.addEventListener("click", function () {
-  $("#shrek").hide();
-  $("#ridlle").show();
-});
-
 function getRandomPosition() {
   const offset = 150; // Adjust this value as needed
   const x = Math.random() * (window.innerWidth - offset);
@@ -284,3 +279,42 @@ targetImg.addEventListener("click", function (event) {
     }, 500);
   }
 });
+
+beatFarBtn.addEventListener("click", function () {
+  $("#shrek").hide();
+  $("#riddle").show();
+
+  // Example usage:
+  var sentence = "What would you suck my dick for ?";
+  var scrambled = scrambleSentence(sentence);
+  d3.select("#tip").node().innerHTML = scrambled;
+});
+
+function scrambleSentence(sentence) {
+  // Split the sentence into an array of characters
+  var characters = sentence.split("");
+
+  // Filter out spaces
+  var nonSpaceCharacters = characters.filter(function (char) {
+    return char !== " ";
+  });
+
+  // Scramble all characters except for the first and last ones
+  var scrambledCharacters = nonSpaceCharacters
+    .slice(1, nonSpaceCharacters.length - 1)
+    .sort(function () {
+      return 0.5 - Math.random();
+    });
+
+  // Insert scrambled characters back into the array
+  for (var i = 1, j = 0; i < characters.length - 1; i++) {
+    if (characters[i] !== " ") {
+      characters[i] = scrambledCharacters[j++];
+    }
+  }
+
+  // Join the characters back into a sentence
+  var scrambledSentence = characters.join("");
+
+  return scrambledSentence;
+}
