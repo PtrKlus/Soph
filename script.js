@@ -3,11 +3,11 @@ var triesTip = 5;
 var timercheck;
 document.addEventListener("DOMContentLoaded", function () {
   var hiddenImage = document.getElementById("hiddenImage");
-  $("#blackSquare").show();
+  $("#blackSquare").hide();
   $("#foundSquare").hide();
   $("#date").hide();
   $("#map").hide();
-  $("#shrek").hide();
+  $("#shrek").show();
   $("#riddle").hide();
 
   // Make the image visible and clickable when the document is loaded
@@ -251,7 +251,7 @@ targetImg.addEventListener("click", function (event) {
     return;
   } else {
     showImage();
-    var damage = Math.floor(Math.random() * 30);
+    var damage = Math.floor(Math.random() * 30000);
 
     const x = event.clientX;
     const y = event.clientY;
@@ -285,12 +285,21 @@ beatFarBtn.addEventListener("click", function () {
   $("#riddle").show();
 
   // Example usage:
-  var sentence = "What would you suck my dick for ?";
-  var scrambled = scrambleSentence(sentence);
+  var scrambled = scrambleSentence();
   d3.select("#tip").node().innerHTML = scrambled;
 });
 
-function scrambleSentence(sentence) {
+const randomBtn = document.getElementById("randomBtn");
+var timerRid = 1;
+
+randomBtn.addEventListener("click", function () {
+  var scrambled = scrambleSentence();
+  d3.select("#tip").node().innerHTML = scrambled;
+});
+
+function scrambleSentence() {
+  var sentence = "What would you suck my dick for ?";
+
   // Split the sentence into an array of characters
   var characters = sentence.split("");
 
@@ -298,18 +307,31 @@ function scrambleSentence(sentence) {
   var nonSpaceCharacters = characters.filter(function (char) {
     return char !== " ";
   });
+  console.log(
+    "🚀 ~ nonSpaceCharacters ~ nonSpaceCharacters:",
+    nonSpaceCharacters
+  );
 
-  // Scramble all characters except for the first and last ones
-  var scrambledCharacters = nonSpaceCharacters
-    .slice(1, nonSpaceCharacters.length - 1)
-    .sort(function () {
-      return 0.5 - Math.random();
-    });
+  timerRid -= 0.05;
+  if (timerRid < 0.1) {
+    timerRid = 0.1; // Minimum intensity
+  }
+  var numToScramble = Math.ceil(nonSpaceCharacters.length * timerRid);
+  console.log("🚀 ~ nonSpaceCharacters ~ timerRid:", timerRid);
+
+  var shuffledCharacters = nonSpaceCharacters.slice().sort(function () {
+    return 0.5 - Math.random();
+  });
+
+  // Select a portion of characters to scramble
+  var scrambledCharacters = shuffledCharacters.slice(0, numToScramble);
 
   // Insert scrambled characters back into the array
   for (var i = 1, j = 0; i < characters.length - 1; i++) {
     if (characters[i] !== " ") {
-      characters[i] = scrambledCharacters[j++];
+      characters[i] = scrambledCharacters.includes(characters[i])
+        ? scrambledCharacters[j++]
+        : characters[i];
     }
   }
 
