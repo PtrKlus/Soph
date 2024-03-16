@@ -290,7 +290,7 @@ beatFarBtn.addEventListener("click", function () {
 });
 
 const randomBtn = document.getElementById("randomBtn");
-var timerRid = 1;
+var timerRid = 0.5;
 
 randomBtn.addEventListener("click", function () {
   var scrambled = scrambleSentence();
@@ -304,17 +304,19 @@ function scrambleSentence() {
   var characters = sentence.split("");
 
   // Filter out spaces
-  var nonSpaceCharacters = characters.filter(function (char) {
-    return char !== " ";
-  });
-  console.log(
-    "🚀 ~ nonSpaceCharacters ~ nonSpaceCharacters:",
-    nonSpaceCharacters
-  );
+  var nonSpaceCharacters = [];
+  var spacePositions = [];
+  for (var i = 0; i < characters.length; i++) {
+    if (characters[i] !== " ") {
+      nonSpaceCharacters.push(characters[i]);
+    } else {
+      spacePositions.push(i);
+    }
+  }
 
-  timerRid -= 0.05;
+  timerRid -= 0.075;
   if (timerRid < 0.1) {
-    timerRid = 0.1; // Minimum intensity
+    timerRid = 0.3; // Minimum intensity
   }
   var numToScramble = Math.ceil(nonSpaceCharacters.length * timerRid);
   console.log("🚀 ~ nonSpaceCharacters ~ timerRid:", timerRid);
@@ -327,12 +329,9 @@ function scrambleSentence() {
   var scrambledCharacters = shuffledCharacters.slice(0, numToScramble);
 
   // Insert scrambled characters back into the array
-  for (var i = 1, j = 0; i < characters.length - 1; i++) {
-    if (characters[i] !== " ") {
-      characters[i] = scrambledCharacters.includes(characters[i])
-        ? scrambledCharacters[j++]
-        : characters[i];
-    }
+  for (var j = 0; j < scrambledCharacters.length; j++) {
+    characters[spacePositions[j]] = " "; // Reset spaces
+    characters[spacePositions[j] + 1] = scrambledCharacters[j];
   }
 
   // Join the characters back into a sentence
