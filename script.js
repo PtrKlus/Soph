@@ -3,12 +3,13 @@ var triesTip = 5;
 var timercheck;
 document.addEventListener("DOMContentLoaded", function () {
   var hiddenImage = document.getElementById("hiddenImage");
-  $("#blackSquare").hide();
+  $("#blackSquare").show();
   $("#foundSquare").hide();
   $("#date").hide();
   $("#map").hide();
-  $("#shrek").show();
+  $("#shrek").hide();
   $("#riddle").hide();
+  $("#end").hide();
 
   // Make the image visible and clickable when the document is loaded
 
@@ -251,7 +252,7 @@ targetImg.addEventListener("click", function (event) {
     return;
   } else {
     showImage();
-    var damage = Math.floor(Math.random() * 30000);
+    var damage = Math.floor(Math.random() * 35);
 
     const x = event.clientX;
     const y = event.clientY;
@@ -339,3 +340,17 @@ function scrambleSentence() {
 
   return scrambledSentence;
 }
+
+const submitBtn = document.getElementById("tryBtn");
+
+submitBtn.addEventListener("click", function () {
+  var awnser = document.getElementById("lastLevelInput").value;
+  if (awnser == "letter") {
+    $("#riddle").hide();
+    $("#end").show();
+    var audio = new Audio("./pics/Du.mp3");
+    audio.play();
+  } else {
+    document.getElementById("lastLevelInput").value = "";
+  }
+});
